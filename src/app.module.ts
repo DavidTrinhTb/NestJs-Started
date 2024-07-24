@@ -1,8 +1,7 @@
 import { Module } from "@nestjs/common";
-import { CatsModule } from "./cats/cats.module";
-import { MongooseModule } from "@nestjs/mongoose";
+import { ApiModule } from "./modules/api/api.module";
 
 @Module({
-  imports: [CatsModule, MongooseModule.forRoot("mongodb://localhost/nest")],
+  imports: [ApiModule],
 })
 export class AppModule {}

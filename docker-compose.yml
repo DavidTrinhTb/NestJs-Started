@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+ 
+  database:
+    container_name: nestjs-started
+    image: postgres:14.1
+    restart: unless-stopped
+    volumes:
+      - nestjs-started-database:/var/lib/postgres
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: first_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - 5432:5432
+    # networks: 
+    #   - nestjs-started-network
+
+  redis:
+    container_name: nestjs-started-redis
+    image: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - nestjs-started-network
+    volumes:
+      - nestjs-started-redis:/data
+
+networks:
+  nestjs-started-network:
+    driver: bridge
+
+volumes:
+  nestjs-started-redis:
+    driver: local
+  nestjs-started-database:
+    driver: local
