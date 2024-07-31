@@ -1,18 +1,50 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CreateUserDTO } from "./dto/user.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/modules/guards/jwt-auth.guard";
+import { DeleteUserDTO, GetListUserDTO, UpdateUserDTO } from "./dto/user.dto";
 
+@ApiTags("User")
 @Controller("users")
 export class UsersController {
-  constructor(private userService: UserService) {}
+  @Inject(UserService)
+  private readonly userService: UserService;
 
   @Get()
-  getUsers() {
-    return this.userService.getUsers();
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  getUsers(@Query() query: GetListUserDTO) {
+    return this.userService.getUsers(query);
   }
 
-  @Post()
-  createUser(@Body() data: CreateUserDTO) {
-    return this.userService.createUser(data);
+  @Get("/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  getDetailUser() {
+    return this.userService.getUserDetail();
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete("/:wallet_address")
+  deleteUser(@Param() { wallet_address }: DeleteUserDTO) {
+    return this.userService.deleteUser({ wallet_address });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Put("/:wallet_address")
+  updateUser(@Body() body: UpdateUserDTO) {
+    return this.userService.updateUser(body);
   }
 }

@@ -3,9 +3,10 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { configDb } from "./config";
 import { UserEntity } from "./entities/user.entity";
-import { UserRepository } from "./repositories/user.repository";
+import { UserRepositories } from "./repostories/user.repostories";
+import { AuthRepostories } from "./repostories/auth.repostories";
 
-const repositories = [UserRepository];
+const repositories = [UserRepositories, AuthRepostories];
 
 const entities = [UserEntity];
 
@@ -15,7 +16,9 @@ const entities = [UserEntity];
       useFactory: (config: ConfigService) => config.get("db"),
       inject: [ConfigService],
     }),
+
     TypeOrmModule.forFeature(entities),
+
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,

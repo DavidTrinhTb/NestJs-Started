@@ -15,34 +15,65 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
+const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("../../guards/jwt-auth.guard");
 const user_dto_1 = require("./dto/user.dto");
 let UsersController = class UsersController {
-    constructor(userService) {
-        this.userService = userService;
+    getUsers(query) {
+        return this.userService.getUsers(query);
     }
-    getUsers() {
-        return this.userService.getUsers();
+    getDetailUser() {
+        return this.userService.getUserDetail();
     }
-    createUser(data) {
-        return this.userService.createUser(data);
+    deleteUser({ wallet_address }) {
+        return this.userService.deleteUser({ wallet_address });
+    }
+    updateUser(body) {
+        return this.userService.updateUser(body);
     }
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_1.Inject)(user_service_1.UserService),
+    __metadata("design:type", user_service_1.UserService)
+], UsersController.prototype, "userService", void 0);
+__decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [user_dto_1.GetListUserDTO]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getUsers", null);
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Get)("/:id"),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getDetailUser", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)("/:wallet_address"),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_dto_1.DeleteUserDTO]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "deleteUser", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)("/:wallet_address"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_dto_1.CreateUserDTO]),
+    __metadata("design:paramtypes", [user_dto_1.UpdateUserDTO]),
     __metadata("design:returntype", void 0)
-], UsersController.prototype, "createUser", null);
+], UsersController.prototype, "updateUser", null);
 exports.UsersController = UsersController = __decorate([
-    (0, common_1.Controller)("users"),
-    __metadata("design:paramtypes", [user_service_1.UserService])
+    (0, swagger_1.ApiTags)("User"),
+    (0, common_1.Controller)("users")
 ], UsersController);
 //# sourceMappingURL=user.controller.js.map

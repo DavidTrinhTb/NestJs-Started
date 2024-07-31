@@ -12,8 +12,9 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_2 = require("./config");
 const user_entity_1 = require("./entities/user.entity");
-const user_repository_1 = require("./repositories/user.repository");
-const repositories = [user_repository_1.UserRepository];
+const user_repostories_1 = require("./repostories/user.repostories");
+const auth_repostories_1 = require("./repostories/auth.repostories");
+const repositories = [user_repostories_1.UserRepositories, auth_repostories_1.AuthRepostories];
 const entities = [user_entity_1.UserEntity];
 let DatabaseModule = class DatabaseModule {
 };

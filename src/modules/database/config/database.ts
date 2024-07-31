@@ -15,3 +15,4 @@ export const configDb = registerAs(
     logging: false,
   })
 );
+

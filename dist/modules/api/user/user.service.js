@@ -11,25 +11,63 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
-const user_repository_1 = require("../../database/repositories/user.repository");
+const pagination_1 = require("../../common/pagination/pagination");
+const user_repostories_1 = require("../../database/repostories/user.repostories");
+const base_response_1 = require("../../common/response/base.response");
 let UserService = class UserService {
-    constructor(userRepository) {
-        this.userRepository = userRepository;
+    constructor(userRepositories) {
+        this.userRepositories = userRepositories;
     }
-    async createUser(data) {
-        const res = await this.userRepository.createUser(data.wallet_address);
-        return {
-            stauts: 200,
-            data: res,
-        };
+    async getUsers(query) {
+        try {
+            const pagination = await (0, pagination_1.paginateTypeORM)(this.userRepositories, query.page, query.take);
+            return new base_response_1.BaseResponse(pagination, common_1.HttpStatus.OK, "react message successfully");
+        }
+        catch (error) { }
     }
-    async getUsers() {
-        return await this.userRepository.getUsers();
+    async updateUser({ wallet_address, user_name }) {
+        try {
+            const user = await this.userRepositories.findOne({
+                where: { wallet_address: wallet_address },
+            });
+            if (user) {
+                const res = await this.userRepositories.update({
+                    wallet_address,
+                }, {
+                    user_name,
+                });
+                return res.affected > 0;
+            }
+            return new base_response_1.BaseResponse({}, common_1.HttpStatus.BAD_REQUEST, "Can not find user to update");
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException(error.message);
+        }
+    }
+    async getUserDetail() {
+        return await this.userRepositories.getUsers();
+    }
+    async deleteUser({ wallet_address }) {
+        try {
+            const user = await this.userRepositories.findOne({
+                where: { wallet_address: wallet_address },
+            });
+            if (user) {
+                const res = await this.userRepositories.softDelete({
+                    wallet_address: wallet_address,
+                });
+                return res.affected > 0;
+            }
+            return new base_response_1.BaseResponse({}, common_1.HttpStatus.BAD_REQUEST, "Can not find user");
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException(error.message);
+        }
     }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository])
+    __metadata("design:paramtypes", [user_repostories_1.UserRepositories])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

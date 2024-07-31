@@ -1,21 +1,82 @@
-import { Injectable } from "@nestjs/common";
-import { UserRepository } from "src/modules/database/repositories/user.repository";
-import { CreateUserDTO } from "./dto/user.dto";
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import { paginateTypeORM } from "src/modules/common/pagination/pagination";
+import { UserRepositories } from "src/modules/database/repostories/user.repostories";
+import { DeleteUserDTO, GetListUserDTO, UpdateUserDTO } from "./dto/user.dto";
+import { BaseResponse } from "src/modules/common/response/base.response";
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(private userRepositories: UserRepositories) {}
 
-  async createUser(data: CreateUserDTO) {
-    const res = await this.userRepository.createUser(data.wallet_address);
+  async getUsers(query: GetListUserDTO) {
+    try {
+      const pagination = await paginateTypeORM(
+        this.userRepositories,
+        query.page,
+        query.take
+      );
 
-    return {
-      stauts: 200,
-      data: res,
-    };
+      return new BaseResponse(
+        pagination,
+        HttpStatus.OK,
+        "react message successfully"
+      );
+    } catch (error) {}
   }
 
-  async getUsers() {
-    return await this.userRepository.getUsers();
+  async updateUser({ wallet_address, user_name }: UpdateUserDTO) {
+    try {
+      const user = await this.userRepositories.findOne({
+        where: { wallet_address: wallet_address },
+      });
+
+      if (user) {
+        const res = await this.userRepositories.update(
+          {
+            wallet_address,
+          },
+          {
+            user_name,
+          }
+        );
+
+        return res.affected > 0;
+      }
+
+      return new BaseResponse(
+        {},
+        HttpStatus.BAD_REQUEST,
+        "Can not find user to update"
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getUserDetail() {
+    return await this.userRepositories.getUsers();
+  }
+
+  async deleteUser({ wallet_address }: DeleteUserDTO) {
+    try {
+      const user = await this.userRepositories.findOne({
+        where: { wallet_address: wallet_address },
+      });
+
+      if (user) {
+        const res = await this.userRepositories.softDelete({
+          wallet_address: wallet_address,
+        });
+        return res.affected > 0;
+      }
+
+      return new BaseResponse({}, HttpStatus.BAD_REQUEST, "Can not find user");
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
