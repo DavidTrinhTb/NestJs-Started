@@ -5,10 +5,11 @@ import { configDb } from "./config";
 import { UserEntity } from "./entities/user.entity";
 import { UserRepositories } from "./repostories/user.repostories";
 import { AuthRepostories } from "./repostories/auth.repostories";
+import { TokensEntity } from "./entities/token.entity";
 
 const repositories = [UserRepositories, AuthRepostories];
 
-const entities = [UserEntity];
+const entities = [UserEntity, TokensEntity];
 
 @Module({
   imports: [

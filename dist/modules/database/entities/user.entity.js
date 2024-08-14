@@ -16,11 +16,15 @@ let UserEntity = class UserEntity extends base_entity_1.BaseEntity {
 };
 exports.UserEntity = UserEntity;
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true, name: "user_name" }),
+    (0, typeorm_1.PrimaryColumn)("uuid"),
+    __metadata("design:type", String)
+], UserEntity.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], UserEntity.prototype, "user_name", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true, nullable: true }),
+    (0, typeorm_1.Column)({ unique: true }),
     (0, typeorm_1.Index)(),
     __metadata("design:type", String)
 ], UserEntity.prototype, "wallet_address", void 0);
@@ -29,6 +33,7 @@ __decorate([
     __metadata("design:type", Number)
 ], UserEntity.prototype, "nonce", void 0);
 exports.UserEntity = UserEntity = __decorate([
-    (0, typeorm_1.Entity)("users")
+    (0, typeorm_1.Entity)("users"),
+    (0, typeorm_1.Index)(["user_name", "wallet_address"])
 ], UserEntity);
 //# sourceMappingURL=user.entity.js.map

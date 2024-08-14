@@ -14,8 +14,9 @@ const config_2 = require("./config");
 const user_entity_1 = require("./entities/user.entity");
 const user_repostories_1 = require("./repostories/user.repostories");
 const auth_repostories_1 = require("./repostories/auth.repostories");
+const token_entity_1 = require("./entities/token.entity");
 const repositories = [user_repostories_1.UserRepositories, auth_repostories_1.AuthRepostories];
-const entities = [user_entity_1.UserEntity];
+const entities = [user_entity_1.UserEntity, token_entity_1.TokensEntity];
 let DatabaseModule = class DatabaseModule {
 };
 exports.DatabaseModule = DatabaseModule;
